@@ -1,0 +1,36 @@
+{
+  "name": "aia",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Personal AI assistant — long-running local daemon and pluggable channels.",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "turbo run format",
+    "format:check": "turbo run format:check",
+    "check": "turbo run typecheck test lint format:check",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "@types/node": "^25.8.0",
+    "oxfmt": "^0.50.0",
+    "oxlint": "^1.65.0",
+    "tsx": "^4.22.0",
+    "turbo": "^2.9.14",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
