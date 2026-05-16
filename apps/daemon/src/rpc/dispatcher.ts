@@ -5,14 +5,14 @@ import {
   JsonRpcError,
   methodNotFoundResponse,
   parseErrorResponse,
-} from "./errors.js";
+} from './errors.js';
 import type {
   ClientHelloParams,
   ClientHelloResult,
   JsonRpcId,
   JsonRpcRequest,
   JsonRpcResponse,
-} from "./types.js";
+} from './types.js';
 
 interface JsonRpcDispatcherOptions {
   readonly version?: string;
@@ -28,14 +28,14 @@ export class JsonRpcDispatcher {
   private readonly version: string;
 
   public constructor(options: JsonRpcDispatcherOptions = {}) {
-    this.version = options.version ?? "0.0.1";
+    this.version = options.version ?? '0.0.1';
   }
 
   public dispatchFrame(frame: Buffer): JsonRpcResponse | undefined {
     let message: unknown;
 
     try {
-      message = JSON.parse(frame.toString("utf8"));
+      message = JSON.parse(frame.toString('utf8'));
     } catch {
       return parseErrorResponse();
     }
@@ -51,7 +51,7 @@ export class JsonRpcDispatcher {
 
     const { request, hasId, id } = validated;
 
-    if (request.method !== "client/hello") {
+    if (request.method !== 'client/hello') {
       return hasId ? methodNotFoundResponse(id) : undefined;
     }
 
@@ -59,7 +59,7 @@ export class JsonRpcDispatcher {
       const result = this.handleHello(request.params);
       return hasId
         ? {
-            jsonrpc: "2.0",
+            jsonrpc: '2.0',
             id,
             result,
           }
@@ -71,7 +71,7 @@ export class JsonRpcDispatcher {
 
       if (error instanceof JsonRpcError) {
         return {
-          jsonrpc: "2.0",
+          jsonrpc: '2.0',
           id,
           error: {
             code: error.code,
@@ -89,7 +89,7 @@ export class JsonRpcDispatcher {
     parseHelloParams(params);
 
     return {
-      name: "aiad",
+      name: 'aiad',
       version: this.version,
       protocolVersion: 1,
       pid: process.pid,
@@ -106,14 +106,14 @@ function validateRequest(message: unknown): ValidatedRequest | undefined {
     return undefined;
   }
 
-  if (message["jsonrpc"] !== "2.0" || typeof message["method"] !== "string") {
+  if (message['jsonrpc'] !== '2.0' || typeof message['method'] !== 'string') {
     return undefined;
   }
 
-  const hasId = Object.hasOwn(message, "id");
+  const hasId = Object.hasOwn(message, 'id');
   let id: JsonRpcId = null;
   if (hasId) {
-    const rawId = message["id"];
+    const rawId = message['id'];
     if (!isJsonRpcId(rawId)) {
       return undefined;
     }
@@ -121,9 +121,9 @@ function validateRequest(message: unknown): ValidatedRequest | undefined {
   }
 
   const request: JsonRpcRequest = {
-    jsonrpc: "2.0",
-    method: message["method"],
-    ...(Object.hasOwn(message, "params") ? { params: message["params"] } : {}),
+    jsonrpc: '2.0',
+    method: message['method'],
+    ...(Object.hasOwn(message, 'params') ? { params: message['params'] } : {}),
     ...(hasId ? { id } : {}),
   };
 
@@ -139,7 +139,7 @@ function extractResponseId(message: unknown): JsonRpcId {
     return null;
   }
 
-  const id = message["id"];
+  const id = message['id'];
   return isJsonRpcId(id) ? id : null;
 }
 
@@ -148,13 +148,13 @@ function parseHelloParams(params: unknown): ClientHelloParams {
     throw invalidParamsError();
   }
 
-  const role = params["role"];
-  if (role !== "tui" && role !== "admin" && role !== "cli") {
+  const role = params['role'];
+  if (role !== 'tui' && role !== 'admin' && role !== 'cli') {
     throw invalidParamsError();
   }
 
-  const clientVersion = params["clientVersion"];
-  if (clientVersion !== undefined && typeof clientVersion !== "string") {
+  const clientVersion = params['clientVersion'];
+  if (clientVersion !== undefined && typeof clientVersion !== 'string') {
     throw invalidParamsError();
   }
 
@@ -162,13 +162,13 @@ function parseHelloParams(params: unknown): ClientHelloParams {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === 'object' && value !== null;
 }
 
 function isJsonRpcId(value: unknown): value is JsonRpcId {
-  return value === null || typeof value === "string" || isFiniteNumber(value);
+  return value === null || typeof value === 'string' || isFiniteNumber(value);
 }
 
 function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
+  return typeof value === 'number' && Number.isFinite(value);
 }
