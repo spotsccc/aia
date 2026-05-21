@@ -1,9 +1,13 @@
 #!/usr/bin/env node
-import { daemonInfo } from './info.js';
+import { installRpcServerSignalHandlers, startRpcServer } from './rpc/server.js';
 
-function main(): void {
-  const info = daemonInfo();
-  console.log(`${info.name} v${info.version} — not yet implemented`);
+async function main(): Promise<void> {
+  const handle = await startRpcServer();
+  installRpcServerSignalHandlers(handle);
 }
 
-main();
+void main().catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(message);
+  process.exitCode = 1;
+});
